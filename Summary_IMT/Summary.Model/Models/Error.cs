@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Summary_IMT.Model.Models
+namespace Summary_IMT.Summary.Model.Models
 {
     [Table("Errors")]
     public class Error

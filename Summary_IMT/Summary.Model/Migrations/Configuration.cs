@@ -1,6 +1,6 @@
 ﻿// using Microsoft.AspNet.Identity;
 // using Microsoft.AspNet.Identity.EntityFramework;
-using Summary_IMT.Model.Models;
+using Summary_IMT.Summary.Model.Models;
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Summary_IMT.Migrations
+namespace Summary_IMT.Summary.Model.Migrations
 {
     internal sealed class Configuration : DbMigrationsConfiguration<SummaryDbContext>
     {
@@ -271,7 +271,7 @@ namespace Summary_IMT.Migrations
             {
                 try
                 {
-                    var contactDetail = new Summary_IMT.Model.Models.ContactDetail()
+                    var contactDetail = new Summary_IMT.Summary.Model.Models.ContactDetail()
                     {
                         Name = "Shop thời trang TEDU",
                         Address = "Ngõ 77 Xuân La",

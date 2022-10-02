@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Summary_IMT.Abstract;
 
-namespace Summary_IMT.Model.Models
+namespace Summary_IMT.Summary.Model.Models
 {
     [Table("Posts")]
     public class Post : Auditable

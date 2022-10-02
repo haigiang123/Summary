@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Summary_IMT.Model.Models
+namespace Summary_IMT.Summary.Model.Models
 {
     [Table("Feedbacks")]
     public class Feedback

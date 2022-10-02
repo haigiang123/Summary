@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Summary_IMT.Abstract;
 
-namespace Summary_IMT.Model.Models
+namespace Summary_IMT.Summary.Model.Models
 {
     [Table("Pages")]
     public class Page : Auditable
