@@ -41,12 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PageBusiness.cs" />
+    <Compile Include="PostBusiness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Summary.Data\Summary.Data.csproj">
       <Project>{f0b74543-32b8-4af5-912d-19969c2c16a0}</Project>
       <Name>Summary.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Summary.Model\Summary.Model.csproj">
+      <Project>{596BCF2A-321D-47E7-82EE-E324BF5BC29D}</Project>
+      <Name>Summary.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
