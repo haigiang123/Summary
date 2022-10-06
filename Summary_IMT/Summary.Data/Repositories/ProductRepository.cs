@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 
-namespace TeduShop.Data.Repositories
+namespace Summary.Data.Repositories
 {
     public interface IProductRepository : IRepository<Product>
     {

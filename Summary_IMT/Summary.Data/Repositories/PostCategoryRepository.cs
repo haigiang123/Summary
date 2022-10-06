@@ -1,7 +1,7 @@
 ﻿using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 
-namespace TeduShop.Data.Repositories
+namespace Summary.Data.Repositories
 {
     public interface IPostCategoryRepository : IRepository<PostCategory>
     {

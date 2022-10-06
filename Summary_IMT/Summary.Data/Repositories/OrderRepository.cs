@@ -2,14 +2,14 @@
 using System.Data.SqlClient;
 using Summary.Share.ViewModel;
 using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 using System.Linq;
 using System;
 using System.Globalization;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity;
 
-namespace TeduShop.Data.Repositories
+namespace Summary.Data.Repositories
 {
     public interface IOrderRepository : IRepository<Order>
     {

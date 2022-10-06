@@ -1,5 +1,5 @@
 ﻿using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,8 @@ namespace Summary.Data.Repositories
 
         public IEnumerable<ProductCategory> GetByAlias(string alias)
         {
-            throw new NotImplementedException();
+            // return this.GetMulti(x => x.Alias == alias, new string[] { "ProductCategory" });
+            return this.DbContext.ProductCategories.ToList();
         }
     } 
 }

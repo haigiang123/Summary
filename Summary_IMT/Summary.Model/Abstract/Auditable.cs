@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Summary_IMT.Abstract
+namespace Summary.Model.Abstract
 {
     public abstract class Auditable
     {

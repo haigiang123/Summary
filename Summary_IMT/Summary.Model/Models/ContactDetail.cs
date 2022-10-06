@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Summary_IMT.Summary.Model.Models
+namespace Summary.Model.Models
 {
     [Table("ContactDetails")]
     public class ContactDetail

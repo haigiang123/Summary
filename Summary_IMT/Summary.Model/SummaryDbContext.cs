@@ -1,9 +1,9 @@
 ﻿using System.Data.Entity;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 
-namespace Summary_IMT.Summary.Model
+namespace Summary.Model
 {
     public class SummaryDbContext : DbContext
     {
@@ -47,7 +47,7 @@ namespace Summary_IMT.Summary.Model
         public DbSet<Announcement> Announcements { set; get; }
         public DbSet<AnnouncementUser> AnnouncementUsers { set; get; }
 
-        private static SummaryDbContext Create()
+        public static SummaryDbContext Create()
         {
             return new SummaryDbContext();
         }

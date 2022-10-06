@@ -1,4 +1,4 @@
-﻿using Summary_IMT.Summary.Model;
+﻿using Summary.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

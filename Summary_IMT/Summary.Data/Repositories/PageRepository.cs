@@ -1,5 +1,5 @@
 ﻿using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

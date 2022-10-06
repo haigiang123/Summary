@@ -1,11 +1,11 @@
 ﻿using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Data.Repositories;
+using Summary.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TeduShop.Data.Repositories;
 
 namespace Summary.Business
 {
@@ -32,8 +32,14 @@ namespace Summary.Business
 
     public class PostBusiness : IPostBusiness
     {
-        private UnitOfWork _unitOfWork;
+        private IUnitOfWork _unitOfWork;
         private IPostRepository _postRepository;
+
+        public PostBusiness(IUnitOfWork unitOfWork, IPostRepository postRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _postRepository = postRepository;
+        }
 
         public void Add(Post post)
         {
@@ -47,7 +53,7 @@ namespace Summary.Business
 
         public IEnumerable<Post> GetAll()
         {
-            return _postRepository.GetAll(new string[] { "PostCategory" });
+            return _postRepository.GetAll();
         }
 
         public IEnumerable<Post> GetAllByCategoryPaging(int categoryId, int page, int pageSize, out int totalRow)

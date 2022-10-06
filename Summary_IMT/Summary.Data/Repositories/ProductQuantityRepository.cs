@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Summary.Data.Infrastructure;
-using Summary_IMT.Summary.Model.Models;
+using Summary.Model.Models;
 
-namespace TeduShop.Data.Repositories
+namespace Summary.Data.Repositories
 {
 
     public interface IProductQuantityRepository : IRepository<ProductQuantity>
