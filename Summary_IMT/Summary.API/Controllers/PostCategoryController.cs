@@ -1,4 +1,6 @@
-﻿using Summary.Business;
+﻿using AutoMapper;
+using Summary.Business;
+using Summary.Share.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +15,13 @@ namespace Summary.API.Controllers
     public class PostCategoryController : APIControllerBase
     {
         private IPostCategoryBusiness _postCategoryBusiness;
+        private readonly IMapper _mapper;
 
-        public PostCategoryController(IErrorBusiness errorService, IPostCategoryBusiness postCategoryBusiness) :
+        public PostCategoryController(IErrorBusiness errorService, IMapper mapper, IPostCategoryBusiness postCategoryBusiness) :
             base(errorService)
         {
             this._postCategoryBusiness = postCategoryBusiness;
+            this._mapper = mapper;
         }
 
         [Route("getall")]
@@ -25,11 +29,11 @@ namespace Summary.API.Controllers
         {
             return CreateHttpResponse(request, () =>
             {
-                var listCategory = this._postCategoryBusiness.GetAll();
+                var listCategory = this._postCategoryBusiness.GetAll().ToList();
 
-                // var listPostCategoryVm = Mapper.Map<List<PostCategoryViewModel>>(listCategory);
+                var listPostCategoryVm = _mapper.Map<List<PostCategoryVM>>(listCategory);
 
-                HttpResponseMessage response = request.CreateResponse(HttpStatusCode.OK, listCategory);
+                HttpResponseMessage response = request.CreateResponse(HttpStatusCode.OK, listPostCategoryVm);
 
                 return response;
             });

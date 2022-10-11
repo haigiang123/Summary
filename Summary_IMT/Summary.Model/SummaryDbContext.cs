@@ -9,7 +9,7 @@ namespace Summary.Model
     {
         public SummaryDbContext() : base("SummaryConnection")
         {
-            this.Configuration.LazyLoadingEnabled = false;
+            //this.Configuration.LazyLoadingEnabled = false;
         }
 
         public DbSet<Order> Orders { set; get; }

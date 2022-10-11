@@ -42,7 +42,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\PostCategoryVM.cs" />
+    <Compile Include="ViewModel\PostVM.cs" />
     <Compile Include="ViewModel\RevenueStatisticViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Summary.Model\Summary.Model.csproj">
+      <Project>{596BCF2A-321D-47E7-82EE-E324BF5BC29D}</Project>
+      <Name>Summary.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

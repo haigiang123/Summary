@@ -32,6 +32,6 @@ namespace Summary.Model.Models
 
         public bool? HomeFlag { set; get; }
 
-        public virtual IEnumerable<Post> Posts { set; get; }
+        public virtual ICollection<Post> Posts { set; get; }
     }
 }

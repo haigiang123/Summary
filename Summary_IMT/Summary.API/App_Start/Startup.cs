@@ -1,8 +1,10 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
+using AutoMapper;
 using Microsoft.Owin;
 using Owin;
+using Summary.API.Infrastructure.Extention;
 using Summary.Business;
 using Summary.Data.Infrastructure;
 using Summary.Data.Repositories;
@@ -45,10 +47,18 @@ namespace Summary.API.App_Start
                 .Where(x => x.Name.EndsWith("Business"))
                 .AsImplementedInterfaces().InstancePerRequest();
 
+            var config = MapperConfig.Config();
+            IMapper mapper = config.CreateMapper();
+
+            builder.RegisterInstance(mapper);
+
+
             Autofac.IContainer container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver((IContainer)container); //Set the WebApi DependencyResolver
+
+            
         }
     }
 }

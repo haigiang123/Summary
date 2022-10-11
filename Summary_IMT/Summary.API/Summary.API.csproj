@@ -53,6 +53,9 @@
     <Reference Include="Autofac.Integration.WebApi, Version=6.1.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.WebApi2.6.1.1\lib\net472\Autofac.Integration.WebApi.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.10.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -160,6 +163,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Core\APIControllerBase.cs" />
+    <Compile Include="Infrastructure\Extention\MapperConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +194,10 @@
     <ProjectReference Include="..\Summary.Model\Summary.Model.csproj">
       <Project>{596bcf2a-321d-47e7-82ee-e324bf5bc29d}</Project>
       <Name>Summary.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Summary.Share\Summary.Share.csproj">
+      <Project>{22E4C461-6806-4562-B8BB-6ACD5E1E8722}</Project>
+      <Name>Summary.Share</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
