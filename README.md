@@ -23,5 +23,6 @@
 - Autofac.WebApi2 => Implement DI
 - Owin
 - Microsoft.Owin.Host.SystemWeb => create Startup.cs and config to that one can auto run at runtime
+- AutoMapper 10.0.0 => auto mapping source to destination, use DI to implement
 
-###
+### 
