@@ -5,7 +5,7 @@ using Summary.Model.Models;
 
 namespace Summary.Model
 {
-    public class SummaryDbContext : DbContext
+    public class SummaryDbContext : IdentityDbContext<AppUser>
     {
         public SummaryDbContext() : base("SummaryConnection")
         {
@@ -47,9 +47,19 @@ namespace Summary.Model
         public DbSet<Announcement> Announcements { set; get; }
         public DbSet<AnnouncementUser> AnnouncementUsers { set; get; }
 
+        
+
+        // create for Identity
         public static SummaryDbContext Create()
         {
             return new SummaryDbContext();
+        }
+
+        // Set key for Identity
+        protected override void OnModelCreating(DbModelBuilder builder)
+        {
+            builder.Entity<IdentityUserRole>().HasKey(x => new { x.RoleId, x.UserId });
+            builder.Entity<IdentityUserLogin>().HasKey(x => x.UserId);
         }
 
     }

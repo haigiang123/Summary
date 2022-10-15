@@ -73,9 +73,14 @@
     <Compile Include="Migrations\202210011358409_init.designer.cs">
       <DependentUpon>202210011358409_init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202210150912337_Integrate_Identity.cs" />
+    <Compile Include="Migrations\202210150912337_Integrate_Identity.designer.cs">
+      <DependentUpon>202210150912337_Integrate_Identity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementUser.cs" />
+    <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\ContactDetail.cs" />
     <Compile Include="Models\Error.cs" />
@@ -110,6 +115,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202210011358409_init.resx">
       <DependentUpon>202210011358409_init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210150912337_Integrate_Identity.resx">
+      <DependentUpon>202210150912337_Integrate_Identity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

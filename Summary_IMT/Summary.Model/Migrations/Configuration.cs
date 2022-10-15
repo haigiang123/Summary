@@ -1,5 +1,7 @@
 ﻿// using Microsoft.AspNet.Identity;
 // using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Summary.Model;
 using Summary.Model.Models;
 
@@ -103,40 +105,40 @@ namespace Summary.Model.Migrations
             }
         }
 
-        //private void CreateUser(SummaryDbContext context)
-        //{
-        //    var manager = new UserManager<AppUser>(new UserStore<AppUser>(new SummaryDbContext()));
-        //    if (manager.Users.Count() == 0)
-        //    {
-        //        var roleManager = new RoleManager<AppRole>(new RoleStore<AppRole>(new SummaryDbContext()));
+        private void CreateUser(SummaryDbContext context)
+        {
+            var manager = new UserManager<AppUser>(new UserStore<AppUser>(new SummaryDbContext()));
+            if (manager.Users.Count() == 0)
+            {
+                var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new SummaryDbContext()));
 
-        //        var user = new AppUser()
-        //        {
-        //            UserName = "admin",
-        //            Email = "admin@tedu.com.vn",
-        //            EmailConfirmed = true,
-        //            BirthDay = DateTime.Now,
-        //            FullName = "Bach Ngoc Toan",
-        //            Avatar = "/assets/images/img.jpg",
-        //            Gender = true,
-        //            Status = true
-        //        };
-        //        if (manager.Users.Count(x => x.UserName == "admin") == 0)
-        //        {
-        //            manager.Create(user, "123654$");
+                var user = new AppUser()
+                {
+                    UserName = "admin",
+                    Email = "admin@tedu.com.vn",
+                    EmailConfirmed = true,
+                    BirthDay = DateTime.Now,
+                    FullName = "Bach Ngoc Toan",
+                    Avatar = "/assets/images/img.jpg",
+                    Gender = true,
+                    Status = true
+                };
+                if (manager.Users.Count(x => x.UserName == "admin") == 0)
+                {
+                    manager.Create(user, "123654$");
 
-        //            if (!roleManager.Roles.Any())
-        //            {
-        //                roleManager.Create(new AppRole { Name = "Admin", Description = "Quản trị viên" });
-        //                roleManager.Create(new AppRole { Name = "Member", Description = "Người dùng" });
-        //            }
+                    if (!roleManager.Roles.Any())
+                    {
+                        roleManager.Create(new IdentityRole { Name = "Admin" });
+                        roleManager.Create(new IdentityRole { Name = "Member" });
+                    }
 
-        //            var adminUser = manager.FindByName("admin");
+                    var adminUser = manager.FindByName("admin");
 
-        //            manager.AddToRoles(adminUser.Id, new string[] { "Admin", "Member" });
-        //        }
-        //    }
-        //}
+                    manager.AddToRoles(adminUser.Id, new string[] { "Admin", "Member" });
+                }
+            }
+        }
 
         private void CreateProductCategorySample(SummaryDbContext context)
         {
