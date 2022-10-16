@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace Summary.WebApi.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/postcategory")]
     public class PostCategoryController : ApiControllerBase
     {
