@@ -10,21 +10,22 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 
 namespace Summary.WebApi.Infrastructure.Core
 {
-    public class ApiControllerBase : Controller
+    public class ApiControllerBase : ApiController
     {
-        private ErrorBusiness _errorBusiness;
+        private IErrorBusiness _errorBusiness;
 
         // GET: ApiControllerBase
-        public ApiControllerBase(ErrorBusiness errorBusiness)
+        public ApiControllerBase(IErrorBusiness errorBusiness)
         {
             _errorBusiness = errorBusiness;
         }
 
-        public HttpResponseMessage CreateRequest(HttpRequestMessage request, Func<HttpResponseMessage> func)
+        public HttpResponseMessage CreateHttpResponse(HttpRequestMessage request, Func<HttpResponseMessage> func)
         {
             HttpResponseMessage response = null;
             try

@@ -50,7 +50,7 @@ namespace Summary.Business
 
         public IEnumerable<PostCategory> GetAll()
         {
-            return _postCategoryRepository.GetAll().ToList();
+            return _postCategoryRepository.GetAll();
         }
 
         public IEnumerable<PostCategory> GetAllByParentId(int parentId)
