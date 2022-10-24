@@ -1,0 +1,39 @@
+﻿@model Summary.WebApi.Models.LoginVM
+
+@{
+    Layout = null;
+}
+
+@{Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "form-submit" });
+    Html.AntiForgeryToken();
+
+<div class="form-horizontal">
+    @Html.ValidationSummary()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.UserName, new  { @class = "control-label col-md-2"} )
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @value = "admin"})
+            @Html.ValidationMessageFor(model => model.UserName, "",  new { @class = "text-danger" } )
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Password, new { @class = "control-label col-md-2" } )
+        <div class="col-md-10">
+            @Html.PasswordFor(model => model.Password, new {  @class = "form-control", @value = "123654$" } )
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Remember, new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.CheckBoxFor(model => model.Remember, new { @class = "form-control" } )
+        </div>
+    </div>
+    <div>
+        <button class="btn btn">Login | </button>
+        <a class="btn btn-default" href="/Login/Register">Sign up</a>
+    </div>
+</div>
+
+}

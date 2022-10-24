@@ -20,9 +20,9 @@ namespace Summary.WebApi.App_Start
             app.CreatePerOwinContext(SummaryDbContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
-            //app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            
             //app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
-            app.CreatePerOwinContext<UserManager<AppUser>>(CreateManager);
+            app.CreatePerOwinContext<UserManager<AppUser>>(CreateManager) ;
 
             app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
@@ -33,6 +33,32 @@ namespace Summary.WebApi.App_Start
             });
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 
+            // Configure the sign in cookie
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                LoginPath = new PathString("/Login/Index"),
+                CookieName = "Summary_Cookie",
+                Provider = new CookieAuthenticationProvider
+                {
+                    // Enables the application to validate the security stamp when the user logs in.
+                    // This is a security feature which is used when you change a password or add an external login to your account.  
+                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, AppUser>(
+                        validateInterval: TimeSpan.FromMinutes(3),
+                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+
+                    //OnResponseSignIn = context =>
+                    //{
+                    //    context.Properties.AllowRefresh = true;
+                    //    context.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
+                    //},
+                },
+                ExpireTimeSpan = TimeSpan.FromMinutes(5),
+                SlidingExpiration = true,
+            }) ;
+
+            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            
         }
 
         private static UserManager<AppUser> CreateManager(IdentityFactoryOptions<UserManager<AppUser>> options, IOwinContext context)

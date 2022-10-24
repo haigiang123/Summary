@@ -2,6 +2,7 @@
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using AutoMapper;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 using Owin;
@@ -9,6 +10,7 @@ using Summary.Business;
 using Summary.Data.Infrastructure;
 using Summary.Data.Repositories;
 using Summary.Model;
+using Summary.Model.Models;
 using Summary.WebApi.Infrastructure.Extention;
 using System.Reflection;
 using System.Web;
@@ -52,7 +54,8 @@ namespace Summary.WebApi.App_Start
             // Identity
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
-
+            builder.RegisterType<ApplicationUserStore>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerRequest();
             //builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
 
             builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();

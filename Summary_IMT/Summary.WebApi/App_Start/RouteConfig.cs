@@ -14,10 +14,24 @@ namespace Summary.WebApi
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
-                namespaces: new string[] {"Summary.WebApi.Controllers"} 
+                 name: "Default",
+                 url: "{controller}/{action}/{id}",
+                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+                   namespaces: new string[] { "Summary.WebApi.Controllers" }
+             );
+
+            routes.MapRoute(
+                name: "Login",
+                url: "dang-nhap.html",
+                defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional },
+                namespaces: new string[] { "Summary.WebApi.Controllers" }
+            );
+
+            routes.MapRoute(
+                name: "Register",
+                url: "dang-ky.html",
+                defaults: new { controller = "Login", action = "Register", id = UrlParameter.Optional },
+                namespaces: new string[] { "Summary.WebApi.Controllers" }
             );
         }
     }
