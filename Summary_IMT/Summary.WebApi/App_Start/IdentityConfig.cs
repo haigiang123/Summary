@@ -3,14 +3,17 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+
 using Summary.Model;
 using Summary.Model.Models;
+using Summary.Share.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Summary.WebApi.App_Start
 {
@@ -21,12 +24,62 @@ namespace Summary.WebApi.App_Start
         {
         }
     }
+
+    public class EmailService : IIdentityMessageService
+    {
+        public Task SendAsync(IdentityMessage message)
+        {
+            try
+            {
+                var host = ConfigurationHelper.GetByKey("SMTPHost");
+                var port = int.Parse(ConfigurationHelper.GetByKey("SMTPPort"));
+                var fromEmail = ConfigurationHelper.GetByKey("FromEmailAddress");
+                var password = ConfigurationHelper.GetByKey("FromEmailPassword");
+                var fromName = ConfigurationHelper.GetByKey("FromName");
+
+                var smtpClient = new SmtpClient(host, port)
+                {
+                    UseDefaultCredentials = false,
+                    Credentials = new System.Net.NetworkCredential(fromEmail, password),
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    EnableSsl = true,
+                    Timeout = 60
+                };
+
+                var mail = new MailMessage
+                {
+                    Body = message.Body,
+                    Subject = message.Subject,
+                    From = new MailAddress(fromEmail, fromName)
+                };
+
+                mail.To.Add(new MailAddress(message.Destination));
+                mail.BodyEncoding = System.Text.Encoding.UTF8;
+                mail.IsBodyHtml = true;
+                mail.Priority = MailPriority.High;
+
+                return smtpClient.SendMailAsync(mail);
+
+            }
+            catch (SmtpException smex)
+            {
+                Trace.TraceError("Failed to create Web transport.");
+                return Task.FromResult(0);
+            }
+        }
+    }
+
+
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<AppUser>
     {
         public ApplicationUserManager(IUserStore<AppUser> store)
             : base(store)
         {
+            var dataProtectionProvider = Startup.DataProtectionProvider;
+            this.UserTokenProvider =
+                    new DataProtectorTokenProvider<AppUser>(dataProtectionProvider.Create("EmailConfirmation"));
+            this.EmailService = new EmailService();
         }
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
@@ -55,12 +108,27 @@ namespace Summary.WebApi.App_Start
 
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            var dataProtectionProvider = options.DataProtectionProvider;
-            if (dataProtectionProvider != null)
+            // Register two factor authentication providers. This application uses Phone and Emails as a 
+            // step of receiving a code for verifying the user
+            // You can write your own provider and plug it in here.
+            manager.RegisterTwoFactorProvider("PhoneCode", new PhoneNumberTokenProvider<AppUser>
             {
-                manager.UserTokenProvider =
-                    new DataProtectorTokenProvider<AppUser>(dataProtectionProvider.Create("ASP.NET Identity"));
-            }
+                MessageFormat = "Your security code is: {0}"
+            });
+            manager.RegisterTwoFactorProvider("EmailCode", new EmailTokenProvider<AppUser>
+            {
+                Subject = "Security Code",
+                BodyFormat = "Your security code is: {0}"
+            });
+            // manager.EmailService = new EmailService();
+            // manager.SmsService = new SmsService();
+
+           
+            //var dataProtectionProvider = new Microsoft.Owin.Security.DataProtection.DpapiDataProtectionProvider("Summary");
+            //if (dataProtectionProvider != null)
+            //{
+            //    manager.UserTokenProvider = new Microsoft.AspNet.Identity.Owin.DataProtectorTokenProvider<AppUser>(dataProtectionProvider.Create("EmailConfirmation")); ;
+            //}
             return manager;
         }
     }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
+
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+
 using Summary.WebApi.App_Start;
 using Summary.WebApi.Infrastructure.Core;
 using Summary.Business;
@@ -14,33 +16,7 @@ namespace Summary.WebApi.Controllers
     [RoutePrefix("api/account")]
     public class AccountController : ApiControllerBase
     {
-        private IErrorBusiness _errorBusiness;
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
+        private IErrorBusiness _errorBusiness;    
 
         public AccountController(IErrorBusiness errorBusiness) : base(errorBusiness)
         {

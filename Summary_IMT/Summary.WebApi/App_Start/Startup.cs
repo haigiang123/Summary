@@ -56,6 +56,8 @@ namespace Summary.WebApi.App_Start
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationUserStore>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationUserStore>().As<IUserStore<AppUser>>().InstancePerRequest();
+            
+            builder.RegisterType<EmailService>().As<IIdentityMessageService>().InstancePerRequest();
             //builder.RegisterType<ApplicationRoleManager>().AsSelf().InstancePerRequest();
 
             builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();

@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using Summary.Model;
@@ -14,13 +15,17 @@ namespace Summary.WebApi.App_Start
 {
     public partial class Startup
     {
+        internal static IDataProtectionProvider DataProtectionProvider;
+
         public void ConfigureAuth(IAppBuilder app)
         {
+            DataProtectionProvider = app.GetDataProtectionProvider();
+
             // Configure the db context, user manager and signin manager to use a single instance per request
             app.CreatePerOwinContext(SummaryDbContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
-            
+            //app.CreatePerOwinContext<EmailService>();
             //app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
             app.CreatePerOwinContext<UserManager<AppUser>>(CreateManager) ;
 

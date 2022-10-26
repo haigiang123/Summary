@@ -1,12 +1,14 @@
-﻿using Summary.Business;
+﻿using Microsoft.AspNet.Identity.Owin;
+using Summary.Business;
 using Summary.Model.Models;
-
+using Summary.WebApi.App_Start;
 using System;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 
@@ -15,6 +17,32 @@ namespace Summary.WebApi.Infrastructure.Core
     public class ApiControllerBase : ApiController
     {
         private IErrorBusiness _errorBusiness;
+        private ApplicationUserManager _userManager;
+        private ApplicationSignInManager _signInManager;
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
         // GET: ApiControllerBase
         public ApiControllerBase(IErrorBusiness errorBusiness)

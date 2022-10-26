@@ -11,6 +11,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
 using Summary.Share.Helper;
+using Microsoft.Owin.Security.DataProtection;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Summary.WebApi.Controllers
 {
@@ -25,6 +27,18 @@ namespace Summary.WebApi.Controllers
             _applicationSignInManager = applicationSignInManager;
         }
 
+        public ApplicationSignInManager SignInManager
+        {
+            get { return _applicationSignInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>(); }
+            private set { _applicationSignInManager = value; }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get { return _applicationUserManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>(); }
+            private set { _applicationUserManager = value; }
+        }
+
         // GET: Login
         public ActionResult Index()
         {
@@ -37,10 +51,10 @@ namespace Summary.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    AppUser user = await _applicationUserManager.FindAsync(login.UserName, login.Password);
-                    if(user != null)
+                    AppUser user = await UserManager.FindAsync(login.UserName, login.Password);
+                    if (user != null)
                     {
-                        ClaimsIdentity identity = _applicationUserManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                        ClaimsIdentity identity = UserManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                         AuthenticationProperties authenticationProperties = new AuthenticationProperties();
 
                         IAuthenticationManager authentication = HttpContext.GetOwinContext().Authentication;
@@ -49,17 +63,14 @@ namespace Summary.WebApi.Controllers
                         authentication.SignIn(authenticationProperties, identity);
 
                         return RedirectToAction("Index", "Home");
-
                     }
                     else
                     {
                         ModelState.AddModelError("", "Account or UserName is incorrect");
                     }
                 }
-                
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
@@ -81,53 +92,68 @@ namespace Summary.WebApi.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterVM model)
         {
-
             if (ModelState.IsValid)
             {
-                var userByEmail = await _applicationUserManager.FindByEmailAsync(model.Email);
-                if (userByEmail != null)
-                {
-                    ModelState.AddModelError("email", "Email đã tồn tại");
-                    return View(model);
-                }
-                var userByUserName = await _applicationUserManager.FindByNameAsync(model.UserName);
-                if (userByUserName != null)
-                {
-                    ModelState.AddModelError("email", "Tài khoản đã tồn tại");
-                    return View(model);
-                }
-                var user = new AppUser()
+                var user = new AppUser
                 {
                     UserName = model.UserName,
                     Email = model.Email,
-                    EmailConfirmed = true,
+                    EmailConfirmed = false,
                     BirthDay = DateTime.Now,
                     FullName = model.FullName,
                     PhoneNumber = model.PhoneNumber,
                     Address = model.Address
-
                 };
 
-                await _applicationUserManager.CreateAsync(user, model.Password);
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Login",
+                       new
+                       {
+                           userId = user.Id,
+                           code = code
+                       }, protocol: Request.Url.Scheme);
 
-                var adminUser = await _applicationUserManager.FindByEmailAsync(model.Email);
-                if (adminUser != null)
-                    await _applicationUserManager.AddToRolesAsync(adminUser.Id, new string[] { "Member" });
+                    UserManager.EmailService = new EmailService();
 
-                string content = System.IO.File.ReadAllText(Server.MapPath("/Assets/newuser.html"));
-                content = content.Replace("{{UserName}}", adminUser.FullName);
-                content = content.Replace("{{Link}}", ConfigurationHelper.GetByKey("CurrentLink") + "/login");
+                    //ConfigurationHelper.GetByKey("CurrentLink") + "/login"
+                    string content = System.IO.File.ReadAllText(Server.MapPath("/Assets/newuser.html"));
+                    content = content.Replace("{{UserName}}", "haigt");
+                    content = content.Replace("{{Link}}", callbackUrl);
 
-                MailHelper.SendMail(adminUser.Email, "Đăng ký thành công", content);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", content);
 
+                    var message = "Check your email and confirm your account, you must be confirmed "
+                             + "before you can log in.";
 
-                ViewData["SuccessMsg"] = "Đăng ký thành công";
+                    return RedirectToAction("Info", new { message = message });
+                }
             }
+            return View(model);
+        }
 
+        public ActionResult Info(string message)
+        {
+            ViewBag.Message = message;
             return View();
         }
 
+        public async Task<ActionResult> ConfirmEmail(string userId, string code)
+        {
+            if(userId == null || code == null)
+            {
+                return View("Error");
+            }
+
+            var result = await UserManager.ConfirmEmailAsync(userId, code);
+
+            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+        }
     }
 }

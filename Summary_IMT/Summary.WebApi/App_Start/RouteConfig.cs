@@ -17,7 +17,7 @@ namespace Summary.WebApi
                  name: "Default",
                  url: "{controller}/{action}/{id}",
                  defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
-                   namespaces: new string[] { "Summary.WebApi.Controllers" }
+                 namespaces: new string[] { "Summary.WebApi.Controllers" }
              );
 
             routes.MapRoute(
