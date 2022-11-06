@@ -13,6 +13,8 @@ using System.Security.Claims;
 using Summary.Share.Helper;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.AspNet.Identity.Owin;
+using System.IO;
+using System.Linq;
 
 namespace Summary.WebApi.Controllers
 {
@@ -155,5 +157,82 @@ namespace Summary.WebApi.Controllers
 
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> UpdateAccount()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult TestAjax(IntegrateTinyMCEVM model)
+        {
+            var mess = new { status = 1, message = "OKIE" };   
+            return Json( mess, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        //HttpPostedFileBase[] content
+        public async Task<ActionResult> UpdateAccount(IntegrateTinyMCEVM model)
+        {
+            foreach (var item in model.Image)
+            {
+                //var file = Request.Files["Image"];
+                string extension = Path.GetExtension(item.FileName);
+                string fileid = Guid.NewGuid().ToString();
+                fileid = Path.ChangeExtension(fileid, extension);
+
+                string savePath = Server.MapPath(@"~\Uploads\" + fileid);
+                item.SaveAs(savePath);
+            }
+
+
+            //return Content(Url.Content(@"~\Uploads\" + fileid));
+
+            return View("DisplayNewContent", model);
+        }
+
+        //public ActionResult TinyMceUpload()
+        //{
+        //    var file = Request.Files["file"];
+
+        //    string extension = Path.GetExtension(file.FileName);
+        //    string fileid = Guid.NewGuid().ToString();
+        //    fileid = Path.ChangeExtension(fileid, extension);
+
+        //    var draft = new { location = "" };
+
+        //    if (file != null && file.ContentLength > 0)
+        //    {
+        //        const int megabyte = 1024 * 1024;
+
+        //        if (!file.ContentType.StartsWith("image/"))
+        //        {
+        //            throw new InvalidOperationException("Invalid MIME content type.");
+        //        }
+
+        //        string[] extensions = { ".gif", ".jpg", ".png" };
+        //        if (!extensions.Contains(extension))
+        //        {
+        //            throw new InvalidOperationException("Invalid file extension.");
+        //        }
+
+        //        if (file.ContentLength > (8 * megabyte))
+        //        {
+        //            throw new InvalidOperationException("File size limit exceeded.");
+        //        }
+
+        //        string savePath = Server.MapPath(@"~/Uploads/" + fileid);
+        //        file.SaveAs(savePath);
+
+        //        draft = new { location = Path.Combine("/Uploads", fileid).Replace('\\', '/') };
+        //    }
+
+
+        //    return Json(draft, JsonRequestBehavior.AllowGet);
+        //} 
+
     }
 }

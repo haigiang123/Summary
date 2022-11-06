@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using Summary.WebApi.App_Start;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Summary.WebApi
@@ -8,6 +9,7 @@ namespace Summary.WebApi
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new AuthorizeFilter());
         }
     }
 }
