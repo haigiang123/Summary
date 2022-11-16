@@ -69,6 +69,22 @@ namespace Summary.WebApi.App_Start
         }
     }
 
+    public class SmsService : IIdentityMessageService
+    {
+        public Task SendAsync(IdentityMessage message)
+        {
+            // Plug in your SMS service here to send a text message.
+            var soapSms = new ASPSMSX2.ASPSMSX2SoapClient("ASPSMSX2Soap");
+            soapSms.SendSimpleTextSMS(
+                System.Configuration.ConfigurationManager.AppSettings["ASPSMSUSERKEY"],
+                System.Configuration.ConfigurationManager.AppSettings["ASPSMSPASSWORD"],
+                message.Destination,
+                System.Configuration.ConfigurationManager.AppSettings["ASPSMSORIGINATOR"],
+                message.Body);
+            soapSms.Close();
+            return Task.FromResult(0);
+        }
+    }
 
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<AppUser>
@@ -80,6 +96,7 @@ namespace Summary.WebApi.App_Start
             this.UserTokenProvider =
                     new DataProtectorTokenProvider<AppUser>(dataProtectionProvider.Create("EmailConfirmation"));
             this.EmailService = new EmailService();
+            this.SmsService = new SmsService();
         }
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)

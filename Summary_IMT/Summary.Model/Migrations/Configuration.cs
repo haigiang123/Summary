@@ -31,8 +31,8 @@ namespace Summary.Model.Migrations
             //CreateContactDetail(context);
 
             //CreateConfigTitle(context);
-            //// CreateFooter(context);
-            //// CreateUser(context);
+            ////CreateFooter(context);
+            //CreateUser(context);
             //CreateSize(context);
             //CreateColor(context);
             //CreateFunction(context);
