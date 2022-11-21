@@ -41,6 +41,15 @@ namespace Summary.WebApi.Controllers
             private set { _applicationUserManager = value; }
         }
 
+        public IAuthenticationManager authenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
+        }
+
+        #region Login and logout
         // GET: Login
         public ActionResult Index()
         {
@@ -53,23 +62,52 @@ namespace Summary.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    AppUser user = await UserManager.FindAsync(login.UserName, login.Password);
-                    if (user != null)
+                    AppUser user = await UserManager.FindByNameAsync(login.UserName);
+                    var signInStatus = await SignInManager.PasswordSignInAsync(login.UserName, login.Password, login.Remember, true);
+                    if(user != null)
                     {
-                        ClaimsIdentity identity = UserManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
-                        AuthenticationProperties authenticationProperties = new AuthenticationProperties();
+                        switch (signInStatus)
+                        {
+                            case SignInStatus.Success:
+                                await SignInAsync(user, login.Remember);
+                                return RedirectToAction("ManageAccount");
+                            case SignInStatus.LockedOut:
+                                if (user.LockoutEndDateUtc <= DateTime.Now)
+                                {
+                                    await UserManager.ResetAccessFailedCountAsync(user.Id);
+                                    UserManager.UserLockoutEnabledByDefault = false;
+                                    await UserManager.SetLockoutEnabledAsync(user.Id, false);
+                                    return RedirectToAction("Index");
+                                }
+                                else
+                                {
+                                    return RedirectToAction("Info");
+                                }
+                            case SignInStatus.Failure:
+                                UserManager.MaxFailedAccessAttemptsBeforeLockout = 5; // max fail attemps  
+                                //UserManager.SetLockoutEnabled(user.Id, true);
+                                UserManager.UserLockoutEnabledByDefault = true;
+                                await UserManager.AccessFailedAsync(user.Id);
 
-                        IAuthenticationManager authentication = HttpContext.GetOwinContext().Authentication;
-                        authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-                        authenticationProperties.IsPersistent = login.Remember;
-                        authentication.SignIn(authenticationProperties, identity);
-
-                        return RedirectToAction("Index", "Home");
+                                return RedirectToAction("Index");
+                            default: 
+                                return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Account or UserName is incorrect");
+                        return RedirectToAction("Index");
                     }
+
+                    //ClaimsIdentity identity = UserManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    //AuthenticationProperties authenticationProperties = new AuthenticationProperties();
+
+                    //IAuthenticationManager authentication = HttpContext.GetOwinContext().Authentication;
+                    //authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    //authenticationProperties.IsPersistent = login.Remember;
+                    //authentication.SignIn(authenticationProperties, identity);
+
+                    //return RedirectToAction("Index", "Home");
                 }
             }
             catch (Exception ex)
@@ -77,17 +115,25 @@ namespace Summary.WebApi.Controllers
 
             }
 
-            return View(login);
+            return RedirectToAction("Index");
+        }
+
+        public async Task SignInAsync(AppUser appUser, bool isPersistent)
+        {
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.TwoFactorCookie);
+            authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = isPersistent }, 
+                await appUser.GenerateUserIdentityAsync(UserManager));
         }
 
         public ActionResult Logout()
         {
-            IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
-            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.TwoFactorCookie);
 
             return RedirectToAction("Index", "Login");
         }
+        #endregion
 
+        #region register with an email confirm attached Token
         public ActionResult Register()
         {
             return View();
@@ -157,7 +203,9 @@ namespace Summary.WebApi.Controllers
 
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+        #endregion
 
+        #region Test ajax and javascript as the form basic, integrate TinyUpload file
         [AllowAnonymous]
         public async Task<ActionResult> UpdateAccount()
         {
@@ -234,5 +282,173 @@ namespace Summary.WebApi.Controllers
         //    return Json(draft, JsonRequestBehavior.AllowGet);
         //} 
 
+        #endregion
+
+        #region Manage Account
+
+        [Authorize]
+        public async Task<ActionResult> ManageAccount(ManageMessageId? mesId)
+        {
+            ViewBag.Message = mesId == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : mesId == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : mesId == ManageMessageId.SetTwoFactorSuccess ? "Your two factor provider has been set."
+                : mesId == ManageMessageId.Error ? "An error has occurred."
+                : mesId == ManageMessageId.AddPhoneSuccess ? "The phone number was added."
+                : mesId == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : "";
+
+            var userId = User.Identity.GetUserId();
+
+            ManageAccountVM model = new ManageAccountVM
+            {
+                AccountId = userId,
+                HasPassword = await UserManager.HasPasswordAsync(userId),
+                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
+                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId)
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        public ActionResult AddPhoneNumber()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberVM req)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("PhoneNumber", "Sai rồi");
+                return View(req);
+            }
+
+            var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), req.PhoneNumber);
+            if(UserManager.SmsService != null)
+            {
+                try
+                {
+                    await UserManager.SmsService.SendAsync(new IdentityMessage
+                    {
+                        Destination = req.PhoneNumber,
+                        Body = $"Your security code is: {code}"
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                
+            }
+
+            return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = req.PhoneNumber });
+        }
+
+        [Authorize]
+        public async Task<ActionResult> VerifyPhoneNumber(string PhoneNumber)
+        {
+            var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), PhoneNumber);
+            ViewBag.Status = "For DEMO purposes only, the current code is " + code;
+            return PhoneNumber == null ? View("Error") : View(new VerifyPhoneNumberVM { PhoneNumber = PhoneNumber });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> VerifyPhoneNumber(VerifyPhoneNumberVM req)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(req);
+            }
+
+            var result = await UserManager.ChangePhoneNumberAsync(User.Identity.GetUserId(), req.PhoneNumber, req.Code);
+            if (result.Succeeded)
+            {
+                var user = UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+                await SignInAsync(user.Result, false);
+
+                return RedirectToAction("ManageAccount", new { mesId = ManageMessageId.AddPhoneSuccess });
+            }
+            
+
+            return View();
+        }
+
+        [Authorize]
+        public async Task<ActionResult> RemovePhoneNumber()
+        {
+            var userId = User.Identity.GetUserId();
+            var result = await UserManager.SetPhoneNumberAsync(userId, null);
+
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("ManageAccount", new { mesId = ManageMessageId.Error });
+            }
+
+            var user = await UserManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                await SignInAsync(user, isPersistent: false);
+            }
+            return RedirectToAction("ManageAccount", new { mesId = ManageMessageId.RemovePhoneSuccess });
+        }
+
+        [Authorize]
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordVM req)
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            if(await UserManager.CheckPasswordAsync(user, req.OldPassword) == false)
+            {
+                ModelState.AddModelError("", "User isn't exists");
+                return View(req);
+            }
+
+            var result = await UserManager.ChangePasswordAsync(user.Id, req.OldPassword, req.NewPassword);
+            if (result.Succeeded)
+            {
+                user = await UserManager.FindByIdAsync(user.Id);
+                if (user != null)
+                {
+                    await SignInAsync(user, isPersistent: false);
+                }
+                return RedirectToAction("ManageAccount", new { mesId = ManageMessageId.ChangePasswordSuccess });
+            }
+
+            AddErrors(result);
+            return View(req);
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
+            }
+        }
+
+        public enum ManageMessageId
+        {
+            ChangePasswordSuccess,
+            SetPasswordSuccess,
+            SetTwoFactorSuccess,
+            Error,
+            AddPhoneSuccess,
+            RemovePhoneSuccess
+        }
+
+        #endregion
     }
 }

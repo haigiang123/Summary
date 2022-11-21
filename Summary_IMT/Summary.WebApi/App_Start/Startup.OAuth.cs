@@ -52,11 +52,11 @@ namespace Summary.WebApi.App_Start
                         validateInterval: TimeSpan.FromMinutes(3),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
 
-                    //OnResponseSignIn = context =>
-                    //{
-                    //    context.Properties.AllowRefresh = true;
-                    //    context.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
-                    //},
+                    OnResponseSignIn = context =>
+                    {
+                        context.Properties.AllowRefresh = true;
+                        context.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(5);
+                    },
                 },
                 ExpireTimeSpan = TimeSpan.FromMinutes(5),
                 SlidingExpiration = true,

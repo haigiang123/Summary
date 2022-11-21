@@ -36,4 +36,5 @@
 - Microsoft.Owin.Security
 - Microsoft.Owin.Security.Cookies
 - Microsoft.Owin.Security.OAuth
+- Microsoft.Owin.Host.SystemWeb
 

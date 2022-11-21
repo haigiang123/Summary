@@ -1,0 +1,26 @@
+﻿@model Summary.WebApi.Models.AddPhoneNumberVM
+
+@{
+    ViewBag.Title = "AddPhoneNumber";
+}
+
+<h2>AddPhoneNumber</h2>
+
+@Html.BeginForm("AddPhoneNumber", "Login", FormMethod.Post, new { @class = "form-horizontal" })
+{
+    @Html.AntiForgeryToken()
+    <h4>
+        @Html.ValidationMessageFor(x => x.PhoneNumber, "", new { @class = "text-danger" })
+    </h4>
+    <div class="form-group">
+        @Html.LabelFor(x => x.PhoneNumber, new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(x => x.PhoneNumber, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Send Code value" />
+        </div>
+    </div>
+}
