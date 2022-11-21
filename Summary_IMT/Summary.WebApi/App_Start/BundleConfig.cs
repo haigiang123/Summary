@@ -17,6 +17,8 @@ namespace Summary.WebApi
             bundles.Add(new ScriptBundle("~/bundles/js").Include(
                         "~/Scripts/scripts.js"
                         ));
+            bundles.Add(new ScriptBundle("~/bundles/controller").Include(
+                        "~/Scripts/User/userController.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
@@ -30,6 +32,8 @@ namespace Summary.WebApi
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/styles.css"));
+
+            BundleTable.EnableOptimizations = true;
         }
     }
 }

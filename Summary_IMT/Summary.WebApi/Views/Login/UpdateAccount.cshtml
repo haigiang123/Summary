@@ -16,16 +16,22 @@
             <div class="form-horizontal">
                 <div class="form-group">
                     @Html.LabelFor(model => model.Title, new { @class = "col-lg-2 control-label" })
-                    <div class="col-lg-9">
+                    <div class="col-lg-10">
                         @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
                     </div>
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(model => model.Image, new { @class = "col-lg-2 control-label" })
-                    <div class="col-lg-9">
-                        <input type="file" name="Image" id="file_upload" multiple />
+                    <div class="col-lg-10">
+                        <input type="file" name="Image" id="file_upload" multiple onchange="DisplayImage(this)" />
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <img class="col-lg-offset-2 col-lg-10" id="display-image" src="" style="width:10%; height:10%" />
+                    <br />
+                    <p id="display-name"></p>
                 </div>
 
                 <div class="form-group">
@@ -54,6 +60,26 @@
 
 
 @section partialScripts{
-    <script src="/Scripts/User/userController.js"></script>
+    @Scripts.Render("~/bundles/controller");
+    @*<script src="/Scripts/User/userController.js"></script>*@
+
+    <script>
+        $(document).ready(function () {
+            $("body img").each(function (e, item) {
+                console.log(e);
+                console.log(item);
+                item.src = '@Url.Content("~/Uploads/default.jpg")';
+            });
+        })
+    </script>
+
+    <script type="text/javascript">
+        function DisplayImage(e) {
+            document.getElementById('display-image').src = window.URL.createObjectURL(e.files[0]);
+            document.getElementById('display-name').innerHTML = e.files[0].name;
+        }
+    </script>
+
+    <script src="~/Scripts/JavascriptReview/Array.js"></script>
 }
 
