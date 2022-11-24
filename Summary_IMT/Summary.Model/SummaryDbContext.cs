@@ -35,9 +35,6 @@ namespace Summary.Model
 
         public DbSet<Function> Functions { set; get; }
         //public DbSet<Permission> Permissions { set; get; }
-        //public DbSet<AppRole> AppRoles { set; get; }
-        //public DbSet<IdentityUserRole> UserRoles { set; get; }
-
 
         public DbSet<Color> Colors { set; get; }
         public DbSet<Size> Sizes { set; get; }
@@ -47,7 +44,11 @@ namespace Summary.Model
         public DbSet<Announcement> Announcements { set; get; }
         public DbSet<AnnouncementUser> AnnouncementUsers { set; get; }
 
-        
+        public DbSet<AppRole> AppRoles { get; set; }
+        public DbSet<AppPermission> AppPermissions { get; set; }
+        public DbSet<AppRolePermission> AppRolePermissions { get; set; }
+        public DbSet<IdentityUserRole> AppUserRoles { set; get; }
+
 
         // create for Identity
         public static SummaryDbContext Create()
@@ -58,8 +59,10 @@ namespace Summary.Model
         // Set key for Identity
         protected override void OnModelCreating(DbModelBuilder builder)
         {
-            builder.Entity<IdentityUserRole>().HasKey(x => new { x.RoleId, x.UserId });
-            builder.Entity<IdentityUserLogin>().HasKey(x => x.UserId);
+            builder.Entity<IdentityUserRole>().HasKey(x => new { x.RoleId, x.UserId }).ToTable("AppUserRoles");
+            builder.Entity<IdentityUserLogin>().HasKey(x => x.UserId).ToTable("AppLogins");
+            builder.Entity<IdentityRole>().HasKey(x => x.Id).ToTable("AppRoles");
+            builder.Entity<IdentityUserClaim>().HasKey(x => new { x.Id, x.UserId }).ToTable("AppUserClaims");
         }
 
     }

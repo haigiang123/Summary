@@ -15,6 +15,8 @@ using Microsoft.Owin.Security.DataProtection;
 using Microsoft.AspNet.Identity.Owin;
 using System.IO;
 using System.Linq;
+using Summary.Business;
+using Newtonsoft.Json;
 
 namespace Summary.WebApi.Controllers
 {
@@ -22,11 +24,15 @@ namespace Summary.WebApi.Controllers
     {
         private ApplicationUserManager _applicationUserManager;
         private ApplicationSignInManager _applicationSignInManager;
+        private IAppRolePermissionBusiness _appRolePermissionBusiness;
 
-        public LoginController(ApplicationUserManager applicationUserManager, ApplicationSignInManager applicationSignInManager)
+        public LoginController(ApplicationUserManager applicationUserManager, 
+            ApplicationSignInManager applicationSignInManager,
+            IAppRolePermissionBusiness appRolePermissionBusiness)
         {
             _applicationUserManager = applicationUserManager;
             _applicationSignInManager = applicationSignInManager;
+            _appRolePermissionBusiness = appRolePermissionBusiness;
         }
 
         public ApplicationSignInManager SignInManager
@@ -60,12 +66,16 @@ namespace Summary.WebApi.Controllers
         {
             try
             {
+                login.UserName = "admin";
+                login.Password = "123456aA@";
                 if (ModelState.IsValid)
                 {
                     AppUser user = await UserManager.FindByNameAsync(login.UserName);
                     var signInStatus = await SignInManager.PasswordSignInAsync(login.UserName, login.Password, login.Remember, true);
                     if(user != null)
                     {
+                        //var permission = new SummaryPrincipal(login.UserName, a);
+
                         switch (signInStatus)
                         {
                             case SignInStatus.Success:
@@ -120,13 +130,19 @@ namespace Summary.WebApi.Controllers
 
         public async Task SignInAsync(AppUser appUser, bool isPersistent)
         {
+            var a = _appRolePermissionBusiness.GetPermissionByUserId(appUser.Id);
+            var user = await appUser.GenerateUserIdentityAsync(UserManager);
+            user.AddClaim(new Claim("permissions", JsonConvert.SerializeObject(a)));
+
             authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.TwoFactorCookie);
-            authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = isPersistent }, 
-                await appUser.GenerateUserIdentityAsync(UserManager));
+            authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = isPersistent },
+                user);
         }
 
+        [Authorize]
         public ActionResult Logout()
         {
+
             authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.TwoFactorCookie);
 
             return RedirectToAction("Index", "Login");
@@ -206,8 +222,9 @@ namespace Summary.WebApi.Controllers
         #endregion
 
         #region Test ajax and javascript as the form basic, integrate TinyUpload file
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateAccount()
+        //[AllowAnonymous]
+        [PermissionAttribute(PermissionObject.Admin, PermissionAction.Delete)]
+        public ActionResult UpdateAccount()
         {
             return View();
         }

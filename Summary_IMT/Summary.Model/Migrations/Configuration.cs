@@ -4,7 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Summary.Model;
 using Summary.Model.Models;
-
+using Summary.Share.Helper;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
@@ -20,7 +20,7 @@ namespace Summary.Model.Migrations
     {
         public Configuration()
         {
-            this.AutomaticMigrationsEnabled = true;
+            this.AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(SummaryDbContext context)
@@ -32,10 +32,89 @@ namespace Summary.Model.Migrations
 
             //CreateConfigTitle(context);
             ////CreateFooter(context);
-            //CreateUser(context);
+            ////CreateUser(context);
             //CreateSize(context);
             //CreateColor(context);
             //CreateFunction(context);
+
+            //CreatePermission(context);
+            //CreateUser1(context);
+            
+        }
+
+        private void CreatePermission(SummaryDbContext context)
+        {
+            string perView = Guid.NewGuid().ToString();
+            string perCreate = Guid.NewGuid().ToString();
+            string perEdit = Guid.NewGuid().ToString();
+            string perDelete = Guid.NewGuid().ToString();
+
+            string RoleAdmin = Guid.NewGuid().ToString();
+            string RoleUser = Guid.NewGuid().ToString();
+            string RoleAccount = Guid.NewGuid().ToString();
+
+            if (context.AppPermissions.Count() == 0)
+            {
+                context.AppPermissions.AddRange(new List<AppPermission>
+                {
+                    new AppPermission { Id = perView, ManualId = ((byte)PermissionAction.View), Name = PermissionAction.View.ToString() },
+                    new AppPermission { Id = perCreate, ManualId = ((byte)PermissionAction.Create), Name = PermissionAction.Create.ToString() },
+                    new AppPermission { Id = perEdit, ManualId = ((byte)PermissionAction.Edit), Name = PermissionAction.Edit.ToString() },
+                    new AppPermission { Id = perDelete, ManualId = ((byte)PermissionAction.Delete), Name = PermissionAction.Delete.ToString() },
+                });
+            }
+
+            if (context.AppRoles.Count() == 0)
+            {
+                context.AppRoles.AddRange(new List<AppRole>
+                {
+                    new AppRole { Id = RoleAdmin, ManualId = ((byte)PermissionObject.Admin), Name = PermissionObject.Admin.ToString() },
+                    new AppRole { Id = RoleUser,  ManualId = ((byte)PermissionObject.User), Name = PermissionObject.User.ToString() },
+                    new AppRole { Id = RoleAccount,  ManualId = ((byte)PermissionObject.Account), Name = PermissionObject.Account.ToString() }
+                });
+            }
+
+            if(context.AppRolePermissions.Count() == 0)
+            {
+                context.AppRolePermissions.AddRange(new List<AppRolePermission>
+                {
+                    new AppRolePermission { RoleID = RoleAdmin, PermissionId = perView },
+                    new AppRolePermission { RoleID = RoleAdmin, PermissionId = perCreate },
+                    new AppRolePermission { RoleID = RoleAdmin, PermissionId = perEdit },
+                    new AppRolePermission { RoleID = RoleAdmin, PermissionId = perDelete },
+                    new AppRolePermission { RoleID = RoleUser, PermissionId = perView },
+                    new AppRolePermission { RoleID = RoleUser, PermissionId = perCreate },
+                    new AppRolePermission { RoleID = RoleUser, PermissionId = perEdit },
+                });
+            }
+
+            context.SaveChanges();
+        }
+
+        private void CreateUser1(SummaryDbContext context)
+        {
+            var userManager = new UserManager<AppUser>(new UserStore<AppUser>(context));
+            if (userManager.Users.Count() == 0)
+            {
+                var user = new AppUser()
+                {
+                    UserName = "admin",
+                    Email = "giangthanhhai17@gmail.com",
+                    EmailConfirmed = true,
+                    BirthDay = DateTime.Now,
+                    FullName = "haigt",
+                    Avatar = "/assets/images/img.jpg",
+                    Gender = true,
+                    Status = true
+                };
+
+                var result = userManager.Create(user, "12345678aA@");
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoles(user.Id, new string[] { PermissionObject.Admin.ToString(), PermissionObject.User.ToString() });
+                }
+
+            }
         }
 
         private void CreateFunction(SummaryDbContext context)

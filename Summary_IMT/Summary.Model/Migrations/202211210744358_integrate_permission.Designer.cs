@@ -7,13 +7,13 @@ namespace Summary.Model.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class init : IMigrationMetadata
+    public sealed partial class integrate_permission : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(init));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(integrate_permission));
         
         string IMigrationMetadata.Id
         {
-            get { return "202210011358409_init"; }
+            get { return "202211210744358_integrate_permission"; }
         }
         
         string IMigrationMetadata.Source
