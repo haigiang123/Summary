@@ -7,13 +7,13 @@ namespace Summary.Model.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class init : IMigrationMetadata
+    public sealed partial class edit_manualid_type : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(init));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(edit_manualid_type));
         
         string IMigrationMetadata.Id
         {
-            get { return "202210011358409_init"; }
+            get { return "202211220552263_edit_manualid_type"; }
         }
         
         string IMigrationMetadata.Source

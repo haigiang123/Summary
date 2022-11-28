@@ -1,4 +1,4 @@
-﻿namespace Summary_IMT.Migrations
+﻿namespace Summary.Model.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

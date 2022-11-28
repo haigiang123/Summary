@@ -77,9 +77,20 @@
     <Compile Include="Migrations\202210150912337_Integrate_Identity.designer.cs">
       <DependentUpon>202210150912337_Integrate_Identity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211210744358_integrate_permission.cs" />
+    <Compile Include="Migrations\202211210744358_integrate_permission.designer.cs">
+      <DependentUpon>202211210744358_integrate_permission.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211220552263_edit_manualid_type.cs" />
+    <Compile Include="Migrations\202211220552263_edit_manualid_type.designer.cs">
+      <DependentUpon>202211220552263_edit_manualid_type.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementUser.cs" />
+    <Compile Include="Models\AppPermission.cs" />
+    <Compile Include="Models\AppRole.cs" />
+    <Compile Include="Models\AppRolePermission.cs" />
     <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\ContactDetail.cs" />
@@ -119,6 +130,18 @@
     <EmbeddedResource Include="Migrations\202210150912337_Integrate_Identity.resx">
       <DependentUpon>202210150912337_Integrate_Identity.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211210744358_integrate_permission.resx">
+      <DependentUpon>202211210744358_integrate_permission.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211220552263_edit_manualid_type.resx">
+      <DependentUpon>202211220552263_edit_manualid_type.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Summary.Share\Summary.Share.csproj">
+      <Project>{22E4C461-6806-4562-B8BB-6ACD5E1E8722}</Project>
+      <Name>Summary.Share</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

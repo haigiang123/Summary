@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin.Security.OAuth;
+using Summary.WebApi.App_Start;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Summary.WebApi
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            //config.Filters.Add(new PermissionAttribute());
 
             // Web API routes
             config.MapHttpAttributeRoutes();
