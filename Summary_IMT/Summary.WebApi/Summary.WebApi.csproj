@@ -219,7 +219,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\Startup.OAuth.cs" />
-    <Compile Include="App_Start\SummaryPrincipal.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Connected Services\ASPSMSX2\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -235,7 +234,6 @@
     </Compile>
     <Compile Include="Infrastructure\Core\ApiControllerBase.cs" />
     <Compile Include="Infrastructure\Extension\AuthorizationServerProvider.cs" />
-    <Compile Include="Infrastructure\Extension\ISummaryPrincipal.cs" />
     <Compile Include="Infrastructure\Extension\MapperConfig.cs" />
     <Compile Include="Models\AddPhoneNumberVM.cs" />
     <Compile Include="Models\ChangePasswordVM.cs" />

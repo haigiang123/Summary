@@ -5,11 +5,15 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json;
 using Owin;
+using Summary.Business;
 using Summary.Model;
 using Summary.Model.Models;
 using Summary.WebApi.Infrastructure.Extension;
 using System;
+using System.Security.Claims;
+using System.Web.Mvc;
 
 namespace Summary.WebApi.App_Start
 {
@@ -48,10 +52,16 @@ namespace Summary.WebApi.App_Start
                 {
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
-                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, AppUser>(
-                        validateInterval: TimeSpan.FromMinutes(3),
-                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+                    OnValidateIdentity = async context =>
+                    {
+                        var invalidateBySecirityStamp = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, AppUser>(
+                            validateInterval: TimeSpan.FromMinutes(3),
+                            regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager, context.Identity)
+                        );
 
+                        await invalidateBySecirityStamp.Invoke(context);
+                    },
+                        
                     OnResponseSignIn = context =>
                     {
                         context.Properties.AllowRefresh = true;

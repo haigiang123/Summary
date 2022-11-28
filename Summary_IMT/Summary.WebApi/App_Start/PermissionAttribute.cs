@@ -7,12 +7,13 @@ using System.Web;
 using System.Web.Mvc;
 using Summary.Share.Helper;
 using System.Web.Routing;
+using Summary.Business;
 
 namespace Summary.WebApi.App_Start
 {
     public class PermissionAttribute : ActionFilterAttribute
     {
-       public PermissionAttribute(PermissionObject obj, PermissionAction action) : base()
+       public PermissionAttribute(PermissionObject obj, PermissionAction action)
         {
             Obj = obj;
             Action = action;
@@ -27,7 +28,9 @@ namespace Summary.WebApi.App_Start
             var context = filterContext.HttpContext.GetOwinContext().Authentication;
             if (context.User.Identity.IsAuthenticated)
             {
-                byte[] permission = JsonConvert.DeserializeObject<byte[]>(filterContext.HttpContext.GetOwinContext().Authentication.User.FindFirst("permissions").Value);
+                var userPermission = filterContext.HttpContext.GetOwinContext().Authentication.User.FindFirst("permissions").Value;
+                
+                byte[] permission = JsonConvert.DeserializeObject<byte[]>(userPermission);
                 if ((permission[(byte)Obj] & (byte)Action) != (byte)Action)
                 {
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new

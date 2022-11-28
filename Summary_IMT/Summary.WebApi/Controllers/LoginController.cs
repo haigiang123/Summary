@@ -71,6 +71,7 @@ namespace Summary.WebApi.Controllers
                 if (ModelState.IsValid)
                 {
                     AppUser user = await UserManager.FindByNameAsync(login.UserName);
+
                     var signInStatus = await SignInManager.PasswordSignInAsync(login.UserName, login.Password, login.Remember, true);
                     if(user != null)
                     {
@@ -132,6 +133,7 @@ namespace Summary.WebApi.Controllers
         {
             var a = _appRolePermissionBusiness.GetPermissionByUserId(appUser.Id);
             var user = await appUser.GenerateUserIdentityAsync(UserManager);
+
             user.AddClaim(new Claim("permissions", JsonConvert.SerializeObject(a)));
 
             authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.TwoFactorCookie);
@@ -222,10 +224,13 @@ namespace Summary.WebApi.Controllers
         #endregion
 
         #region Test ajax and javascript as the form basic, integrate TinyUpload file
-        //[AllowAnonymous]
+        [Authorize]
         [PermissionAttribute(PermissionObject.Admin, PermissionAction.Delete)]
         public ActionResult UpdateAccount()
         {
+            var userInfo = UserManager.GetRolesAsync(User.Identity.GetUserId());
+            var roles = _appRolePermissionBusiness.GetRoles("");
+
             return View();
         }
 
