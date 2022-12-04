@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppRolePermissionBusiness.cs" />
+    <Compile Include="AppUserImageBusiness.cs" />
     <Compile Include="ErrorBusiness.cs" />
     <Compile Include="PageBusiness.cs" />
     <Compile Include="PostBusiness.cs" />
@@ -62,6 +63,10 @@
     <ProjectReference Include="..\Summary.Model\Summary.Model.csproj">
       <Project>{596BCF2A-321D-47E7-82EE-E324BF5BC29D}</Project>
       <Name>Summary.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Summary.Share\Summary.Share.csproj">
+      <Project>{22E4C461-6806-4562-B8BB-6ACD5E1E8722}</Project>
+      <Name>Summary.Share</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

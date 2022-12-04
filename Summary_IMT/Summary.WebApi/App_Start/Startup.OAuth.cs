@@ -46,7 +46,7 @@ namespace Summary.WebApi.App_Start
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Login/Index"),
+                LoginPath = new PathString("/sign-in"),
                 CookieName = "Summary_Cookie",
                 Provider = new CookieAuthenticationProvider
                 {

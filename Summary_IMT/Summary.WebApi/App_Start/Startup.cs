@@ -38,10 +38,10 @@ namespace Summary.WebApi.App_Start
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
-            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerDependency();
-            builder.RegisterType<DbFactory>().As<IDbFactory>().InstancePerDependency();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
+            builder.RegisterType<DbFactory>().As<IDbFactory>().InstancePerRequest();
 
-            builder.RegisterType<SummaryDbContext>().AsSelf().InstancePerDependency();
+            builder.RegisterType<SummaryDbContext>().AsSelf().InstancePerRequest();
 
             builder.RegisterAssemblyTypes(typeof(PostCategoryRepository).Assembly)
                     .Where(x => x.Name.EndsWith("Repository"))
@@ -68,9 +68,6 @@ namespace Summary.WebApi.App_Start
             IMapper mapper = config.CreateMapper();
 
             builder.RegisterInstance(mapper);
-
-
-
 
             Autofac.IContainer container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

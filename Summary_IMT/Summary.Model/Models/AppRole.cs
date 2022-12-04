@@ -11,15 +11,17 @@ namespace Summary.Model.Models
     [Table("AppRoles")]
     public class AppRole : IdentityRole
     {
-        public AppRole(string roleName, string description, byte manualId) : base(roleName)
+        public AppRole(string id, string roleName, string description, byte manualId) : base(roleName)
         {
+            Id = id;
             Description = description;
             ManualId = manualId;
+            Name = roleName;
         }
         
         public AppRole() : base()
         {
-
+            
         }
 
         public virtual byte? ManualId { get; set; }

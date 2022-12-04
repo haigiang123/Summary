@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using Summary.Business;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Summary.WebApi.Controllers
 {
@@ -25,14 +26,17 @@ namespace Summary.WebApi.Controllers
         private ApplicationUserManager _applicationUserManager;
         private ApplicationSignInManager _applicationSignInManager;
         private IAppRolePermissionBusiness _appRolePermissionBusiness;
+        private IAppUserImageBusiness _appUserImageBusiness;
 
-        public LoginController(ApplicationUserManager applicationUserManager, 
+        public LoginController(ApplicationUserManager applicationUserManager,
             ApplicationSignInManager applicationSignInManager,
-            IAppRolePermissionBusiness appRolePermissionBusiness)
+            IAppRolePermissionBusiness appRolePermissionBusiness,
+            IAppUserImageBusiness appUserImageBusiness)
         {
             _applicationUserManager = applicationUserManager;
             _applicationSignInManager = applicationSignInManager;
             _appRolePermissionBusiness = appRolePermissionBusiness;
+            _appUserImageBusiness = appUserImageBusiness;
         }
 
         public ApplicationSignInManager SignInManager
@@ -73,7 +77,7 @@ namespace Summary.WebApi.Controllers
                     AppUser user = await UserManager.FindByNameAsync(login.UserName);
 
                     var signInStatus = await SignInManager.PasswordSignInAsync(login.UserName, login.Password, login.Remember, true);
-                    if(user != null)
+                    if (user != null)
                     {
                         //var permission = new SummaryPrincipal(login.UserName, a);
 
@@ -101,7 +105,7 @@ namespace Summary.WebApi.Controllers
                                 await UserManager.AccessFailedAsync(user.Id);
 
                                 return RedirectToAction("Index");
-                            default: 
+                            default:
                                 return RedirectToAction("Index");
                         }
                     }
@@ -212,7 +216,7 @@ namespace Summary.WebApi.Controllers
 
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
-            if(userId == null || code == null)
+            if (userId == null || code == null)
             {
                 return View("Error");
             }
@@ -224,44 +228,75 @@ namespace Summary.WebApi.Controllers
         #endregion
 
         #region Test ajax and javascript as the form basic, integrate TinyUpload file
-        [Authorize]
-        [PermissionAttribute(PermissionObject.Admin, PermissionAction.Delete)]
+        //[Authorize]
+        //[PermissionAttribute(PermissionObject.Admin, PermissionAction.Delete)]
         public ActionResult UpdateAccount()
         {
-            var userInfo = UserManager.GetRolesAsync(User.Identity.GetUserId());
-            var roles = _appRolePermissionBusiness.GetRoles("");
+            var model = new IntegrateTinyMCEVM()
+            {
+                AppUserImages = _appUserImageBusiness.GetAllImage(),
+            };
 
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult TestAjax(IntegrateTinyMCEVM model)
-        {
-            var mess = new { status = 1, message = "OKIE" };   
-            return Json( mess, JsonRequestBehavior.AllowGet);
+            return View(model);
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         //HttpPostedFileBase[] content
-        public async Task<ActionResult> UpdateAccount(IntegrateTinyMCEVM model)
+        public ActionResult UpdateAccount(IntegrateTinyMCEVM model)
         {
+            List<AppUserImage> appUserImages = new List<AppUserImage>();
+
+            //foreach (var item in model.Image)
+            //{
+            //    var file = Request.Files["Image"];
+            //    string extension = Path.GetExtension(item.FileName);
+            //    string fileid = Guid.NewGuid().ToString();
+            //    fileid = Path.ChangeExtension(fileid, extension);
+
+            //    string savePath = Server.MapPath(@"~\Uploads\" + fileid);
+            //    item.SaveAs(savePath);
+
+            //    
+            //}
+
+
+            byte[] contentImage;
             foreach (var item in model.Image)
             {
-                //var file = Request.Files["Image"];
-                string extension = Path.GetExtension(item.FileName);
-                string fileid = Guid.NewGuid().ToString();
-                fileid = Path.ChangeExtension(fileid, extension);
+                using (BinaryReader binaryReader = new BinaryReader(item.InputStream))
+                {
+                    contentImage = binaryReader.ReadBytes(item.ContentLength);
+                }
 
-                string savePath = Server.MapPath(@"~\Uploads\" + fileid);
-                item.SaveAs(savePath);
+                appUserImages.Add(new AppUserImage { Content = contentImage, Type = item.ContentType });
             }
 
+            var result = _appUserImageBusiness.InsertImage(appUserImages);
+            if (result)
+            {
+                //Content($"<img src='data:{image.ContentType};charset=utf-8;base64,{Convert.ToBase64String(contentImage)}' />");
+                return RedirectToAction("UpdateAccount");
+            }
 
             //return Content(Url.Content(@"~\Uploads\" + fileid));
 
             return View("DisplayNewContent", model);
+        }
+
+        [HttpPost]
+        public ActionResult TestAjax(IntegrateTinyMCEVM model)
+        {
+            var mess = new { status = 1, message = "OKIE" };
+            return Json(mess, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateUser(int imageId)
+        {
+            return Content("image/haha");
         }
 
         //public ActionResult TinyMceUpload()
@@ -349,7 +384,7 @@ namespace Summary.WebApi.Controllers
             }
 
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), req.PhoneNumber);
-            if(UserManager.SmsService != null)
+            if (UserManager.SmsService != null)
             {
                 try
                 {
@@ -363,7 +398,7 @@ namespace Summary.WebApi.Controllers
                 {
                     throw ex;
                 }
-                
+
             }
 
             return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = req.PhoneNumber });
@@ -395,7 +430,7 @@ namespace Summary.WebApi.Controllers
 
                 return RedirectToAction("ManageAccount", new { mesId = ManageMessageId.AddPhoneSuccess });
             }
-            
+
 
             return View();
         }
@@ -432,7 +467,7 @@ namespace Summary.WebApi.Controllers
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 
-            if(await UserManager.CheckPasswordAsync(user, req.OldPassword) == false)
+            if (await UserManager.CheckPasswordAsync(user, req.OldPassword) == false)
             {
                 ModelState.AddModelError("", "User isn't exists");
                 return View(req);

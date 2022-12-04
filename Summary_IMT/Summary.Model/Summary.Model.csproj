@@ -85,6 +85,10 @@
     <Compile Include="Migrations\202211220552263_edit_manualid_type.designer.cs">
       <DependentUpon>202211220552263_edit_manualid_type.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211300928210_manage_image.cs" />
+    <Compile Include="Migrations\202211300928210_manage_image.designer.cs">
+      <DependentUpon>202211300928210_manage_image.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementUser.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppRolePermission.cs" />
     <Compile Include="Models\AppUser.cs" />
+    <Compile Include="Models\AppUserImage.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\ContactDetail.cs" />
     <Compile Include="Models\Error.cs" />
@@ -135,6 +140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202211220552263_edit_manualid_type.resx">
       <DependentUpon>202211220552263_edit_manualid_type.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211300928210_manage_image.resx">
+      <DependentUpon>202211300928210_manage_image.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -68,6 +68,7 @@
     <Compile Include="Repositories\AppPermissionRepository.cs" />
     <Compile Include="Repositories\AppRolePermissionRepository.cs" />
     <Compile Include="Repositories\AppRoleRepository.cs" />
+    <Compile Include="Repositories\AppUserImageRepository.cs" />
     <Compile Include="Repositories\ColorRepository.cs" />
     <Compile Include="Repositories\ContactDetailRepository.cs" />
     <Compile Include="Repositories\ErrorRepository.cs" />

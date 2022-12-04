@@ -10,7 +10,7 @@
 <div class="panel panel-primary">
     <div class="panel-heading panel-head">Add News</div>
     <div class="panel-body">
-        @using (Html.BeginForm("UpdateAccount", "Login", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("UpdateAccount", "Login", FormMethod.Post, new { enctype = "multipart/form-data", @class = "update-user-form" }))
         {
             @Html.AntiForgeryToken()
             <div class="form-horizontal">
@@ -24,23 +24,25 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Image, new { @class = "col-lg-2 control-label" })
                     <div class="col-lg-10">
-                        <input type="file" name="Image" id="file_upload" multiple onchange="DisplayImage(this)" />
+                        <input type="file" name="Image" id="file_upload" @*onchange="DisplayImage(this)"*@ multiple  />
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <img class="col-lg-offset-2 col-lg-10" id="display-image" src="" style="width:10%; height:10%" />
+                <div class="form-group display-fake">
+                    <img class='col-lg-offset-2 col-lg-10' id="display-image" src="" style="width:10%; height:10%" />
                     <br />
-                    <p id="display-name"></p>
+                  
+                    @*<p id="display-name"></p>*@
                 </div>
 
-                <div class="form-group">
+                
+
+                @*<div class="form-group">
                     @Html.LabelFor(model => model.Content, new { @class = "col-lg-2 control-label" })
                     <div class="col-lg-9">
                         @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @row = 5 })
                     </div>
-                </div>
-
+                </div>*@
 
 
                 <div class="form-group">
@@ -54,6 +56,56 @@
                 </div>
             </div>
         }
+
+
+        <iframe src="https://learn.microsoft.com/en-us/sql/relational-databases/blob/compare-options-for-storing-blobs-sql-server?redirectedfrom=MSDN&view=sql-server-ver16">
+
+        </iframe>
+
+    </div>
+    <div class="panel-body div-update-image">
+        <table class="text-danger form-group">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Type</th>
+                        <th style="width:20px;">Content</th>
+                        <th>Des</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var a = Model.AppUserImages;
+                        foreach (var item in a)
+                        {
+                            <tr>
+                                <td><span class="@("user-" + item.Id)">@item.Id</span>
+                                    @*@Ajax.ActionLink(item.Id.ToString(), "UpdateUser", new { imageId = item.Id },
+                                                        new AjaxOptions { 
+                                                            Confirm = "Do you want change this", 
+                                                            HttpMethod = "post",
+                                                            OnBegin = "",
+                                                            OnComplete = "",
+                                                            OnSuccess = "",
+                                                            OnFailure = "",
+                                                            UpdateTargetId = "user-" + item.Id
+                                                        })*@
+                                </td>
+                                <td>@item.Type</td>
+                                <td class="form-control">
+                                    <span style="height:10%;width:10%">@Html.Raw($"<img src='data:{item.Type};charset=utf-8;base64,{Convert.ToBase64String(item.Content)}' />")</span>
+                                </td>
+                                <td>
+                                    <input class="@("description-" + item.Id)" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        <div>
+            <input type="button" value="Update Image" class="update-image" onclick="user.UpdateImage(this)" />
+        </div>
     </div>
 </div>
 
@@ -64,20 +116,30 @@
     @*<script src="/Scripts/User/userController.js"></script>*@
 
     <script>
-        $(document).ready(function () {
+        @*$(document).ready(function () {
             $("body img").each(function (e, item) {
-                console.log(e);
-                console.log(item);
                 item.src = '@Url.Content("~/Uploads/default.jpg")';
             });
-        })
+        })*@
     </script>
 
     <script type="text/javascript">
-        function DisplayImage(e) {
-            document.getElementById('display-image').src = window.URL.createObjectURL(e.files[0]);
-            document.getElementById('display-name').innerHTML = e.files[0].name;
-        }
+        //function DisplayImage(e) {
+        //    console.log(e.files);
+            
+        //        document.getElementById('display-image').src = window.URL.createObjectURL(e.files[0]);
+        //        document.getElementById('display-name').innerHTML = e.files[0].name;
+            
+        //}
+
+        $(".update-user-form #file_upload").change(function () {
+
+            $(this.files).each(function (i, ele) {
+                
+                $(".update-user-form .display-fake").append("<image src='" + window.URL.createObjectURL(ele) + "' style='width:10%; height:10%' />");
+            });
+        });
+
     </script>
 
     <script src="~/Scripts/JavascriptReview/Array.js"></script>
