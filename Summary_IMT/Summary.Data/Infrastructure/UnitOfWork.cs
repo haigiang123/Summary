@@ -9,7 +9,7 @@ namespace Summary.Data.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private IDbFactory _dbFactory;
+        private readonly IDbFactory _dbFactory;
         private SummaryDbContext _dbContext;
 
         public UnitOfWork(IDbFactory dbFactory)

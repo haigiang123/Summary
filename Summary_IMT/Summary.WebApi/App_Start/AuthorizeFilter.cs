@@ -24,7 +24,7 @@ namespace Summary.WebApi.App_Start
 
                 if (filterContext.HttpContext.Request.IsAjaxRequest())
                 {
-                    string antiToken = filterContext.HttpContext.Request.Headers["__RequestVerificationToken"] ?? "";
+                    string antiToken = filterContext.HttpContext.Request.Headers["__RequestVerificationToken"] ?? "";                      
                     var cookie = filterContext.HttpContext.Request.Cookies[AntiForgeryConfig.CookieName];
                     AntiForgery.Validate(cookie != null ? cookie.Value : null, antiToken);
                 }

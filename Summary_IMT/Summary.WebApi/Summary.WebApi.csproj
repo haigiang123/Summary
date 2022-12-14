@@ -219,7 +219,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\Startup.OAuth.cs" />
-    <Compile Include="App_Start\SummaryPrincipal.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Connected Services\ASPSMSX2\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -235,13 +234,13 @@
     </Compile>
     <Compile Include="Infrastructure\Core\ApiControllerBase.cs" />
     <Compile Include="Infrastructure\Extension\AuthorizationServerProvider.cs" />
-    <Compile Include="Infrastructure\Extension\ISummaryPrincipal.cs" />
     <Compile Include="Infrastructure\Extension\MapperConfig.cs" />
     <Compile Include="Models\AddPhoneNumberVM.cs" />
     <Compile Include="Models\ChangePasswordVM.cs" />
     <Compile Include="Models\IntegrateTinyMCEVM.cs" />
     <Compile Include="Models\LoginVM.cs" />
     <Compile Include="Models\ManageAccountVM.cs" />
+    <Compile Include="Models\ProductVM.cs" />
     <Compile Include="Models\RegisterVM.cs" />
     <Compile Include="Models\VerifyPhoneNumberVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -277,6 +276,8 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />

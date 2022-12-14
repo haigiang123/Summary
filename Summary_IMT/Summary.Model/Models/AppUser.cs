@@ -28,11 +28,19 @@ namespace Summary.Model.Models
 
         public bool? Gender { get; set; }
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<AppUser> manager)
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<AppUser> manager, ClaimsIdentity claims = null)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
+            if(claims != null)
+            {
+                foreach (var Claim in claims.Claims)
+                {
+                    if (!userIdentity.HasClaim(Claim.Type, Claim.Value))
+                        userIdentity.AddClaim(new Claim(Claim.Type, Claim.Value));
+                }
+            }
             return userIdentity;
         }
 

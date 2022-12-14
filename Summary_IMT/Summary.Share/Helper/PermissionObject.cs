@@ -11,6 +11,7 @@ namespace Summary.Share.Helper
         Admin = 0,
         User = 1,
         Account = 2,
+        Account2 = 3,
         Last = Byte.MaxValue - 1
     }
 }

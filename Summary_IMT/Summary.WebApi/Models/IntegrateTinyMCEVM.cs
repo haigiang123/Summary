@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Summary.Model.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,7 +19,12 @@ namespace Summary.WebApi.Models
         public string Content { get; set; }
 
         public HttpPostedFileBase[] Image { get; set; }
+
+        #region User info
+
+        public string UserId { get; set; }
+
+        public List<AppUserImage> AppUserImages { get; set; }
+        #endregion
     }
-
-
 }

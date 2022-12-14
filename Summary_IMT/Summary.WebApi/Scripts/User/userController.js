@@ -8,6 +8,7 @@
     };
 
     var update = function () {
+        
 
         jsonData = JSON.stringify({
             NewsID: 1,
@@ -15,7 +16,9 @@
             Content: ""
         });
 
-        $("#btn-test-ajax").off("click").on("click", function () {
+        $("#btn-test-ajax").on("click", function (e) {
+            e.preventDefault();
+
             $.ajax({
                 type: "POST",
                 url: "/Login/TestAjax",
@@ -33,9 +36,20 @@
         });
     };
 
+    var updateImage = function (e) {
+
+        var imageData = [];
+        $(e).parentsUntil("#div-update-image").find("td input[class^='description']").each(function (i, el) {
+            imageData.push({ "id": i, "text": $(el).val() });
+        });
+
+        console.log(imageData);
+    }
+
     return {
         Init: init,
-        Update: update
+        Update: update,
+        UpdateImage: updateImage
     }
 })(jQuery);
 

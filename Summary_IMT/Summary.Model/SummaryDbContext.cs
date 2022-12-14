@@ -44,6 +44,8 @@ namespace Summary.Model
         public DbSet<Announcement> Announcements { set; get; }
         public DbSet<AnnouncementUser> AnnouncementUsers { set; get; }
 
+        public DbSet<AppUserImage> AppUserImages { get; set; }
+
         public DbSet<AppRole> AppRoles { get; set; }
         public DbSet<AppPermission> AppPermissions { get; set; }
         public DbSet<AppRolePermission> AppRolePermissions { get; set; }
